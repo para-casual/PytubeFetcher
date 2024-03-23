@@ -43,7 +43,7 @@ class App(tk.Tk):
         self.url_entry.pack(pady=10, padx=20, fill="x")
 
         # Conversion type label
-        conversion_type_font = tkFont.Font(family="Helvetica", size=14)
+        conversion_type_font = tkFont.Font(family="Helvetica", size=14, weight="bold")
         conversion_type_label = ttk.Label(self, text="Conversion Type:", font=conversion_type_font, foreground="#ffffff", background="#1e1e1e")
         conversion_type_label.pack(pady=10)
 
@@ -56,14 +56,24 @@ class App(tk.Tk):
         self.mp3_radio_button.pack(pady=5)
         self.mp4_radio_button.pack(pady=5)
 
+         # Quality type label
+        quality_type_font = tkFont.Font(family="Helvetica", size=12, weight="bold")
+        quality_type_label = ttk.Label(self, text="Stream Quality:", font=quality_type_font, foreground="#ffffff", background="#1e1e1e")
+        quality_type_label.pack(pady=5)
         # The video quality preference list
         self.quality_list = tk.Listbox(self, foreground="#ffffff", background="#333333", selectbackground="#4c4c4c", height=2, width=2)
         self.quality_list.pack(pady=10, padx=10, fill="x")
 
+         # The button lets to open a path to save file
+        save_button_font = tkFont.Font(family="Helvetica", size=20, weight="bold")
+        self.style.configure("SaveButton.TButton", foreground='blue', font=save_button_font, padding=(10, 5))
+        save_button = ttk.Button(self, text="Save File", style='SaveButton.TButton', command=lambda: self.open_file_selector())
+        save_button.pack(pady=10, padx=20, fill="x")
+
         # The big button for converting.
         convert_button_font = tkFont.Font(family="Helvetica", size=20, weight="bold")
         self.style.configure("ConvertButton.TButton", foreground='green', font=convert_button_font, padding=(20, 10))
-        convert_button = ttk.Button(self, text="Convert", style='ConvertButton.TButton',command=self.convert_button_command)
+        convert_button = ttk.Button(self, text="Convert", style='ConvertButton.TButton',command=lambda:self.convert_button_command)
         convert_button.pack(pady=20, padx=20, fill="x")
         self.quality_list.insert(1, "Max")
         self.quality_list.insert(2, "Medium")
@@ -110,7 +120,7 @@ class App(tk.Tk):
     def view_graph_button_command(self):
         print("View Graph Button Clicked!")
 
-    def open_file_selector():
+    def open_file_selector(self):
         """
         Saves file at the user's specified location.
         """
@@ -122,7 +132,7 @@ class App(tk.Tk):
             # format the save path with a slash
             file_save_location = file_path + '/'
 
-            print(file_save_location)
+            print(f"Saving to: {file_save_location}")
             return file_save_location
 
         except Exception as e:
