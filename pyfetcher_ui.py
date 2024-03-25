@@ -16,6 +16,9 @@ class App(tk.Tk):
     height = 700
 
     def __init__(self):
+        """
+        init
+        """
         super().__init__()
         # Create a theme from ttkthemes
         self.style = ThemedStyle(self)
