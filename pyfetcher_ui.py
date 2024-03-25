@@ -5,16 +5,20 @@ from ttkthemes import ThemedStyle
 import pytube
 from pytube import Playlist
 
-
 mp3_mode = False
 mp4_mode = False
 stream_quality = 'Max'
-file_save_location = '' 
+file_save_location = ''
+
 
 class App(tk.Tk):
     width = 800
     height = 700
+
     def __init__(self):
+        """
+        init
+        """
         super().__init__()
         # Create a theme from ttkthemes
         self.style = ThemedStyle(self)
@@ -33,9 +37,10 @@ class App(tk.Tk):
         title_label = ttk.Label(self, text="PyFetcher", font=title_font, foreground="red", background="#1e1e1e")
         title_label.pack(pady=25)
 
-         # The enter URL label
+        # The enter URL label
         enter_url_font = tkFont.Font(family="Helvetica", size=12, weight="bold")
-        enter_url_font = ttk.Label(self, text="Enter The YT URL:", font=enter_url_font, foreground="#ffffff", background="#1e1e1e")
+        enter_url_font = ttk.Label(self, text="Enter The YT URL:", font=enter_url_font, foreground="#ffffff",
+                                   background="#1e1e1e")
         enter_url_font.pack(pady=2)
         # The YouTube URL entry field.
         url_font = tkFont.Font(family="Helvetica", size=14)
@@ -44,36 +49,43 @@ class App(tk.Tk):
 
         # Conversion type label
         conversion_type_font = tkFont.Font(family="Helvetica", size=14, weight="bold")
-        conversion_type_label = ttk.Label(self, text="Conversion Type:", font=conversion_type_font, foreground="#ffffff", background="#1e1e1e")
+        conversion_type_label = ttk.Label(self, text="Conversion Type:", font=conversion_type_font,
+                                          foreground="#ffffff", background="#1e1e1e")
         conversion_type_label.pack(pady=10)
 
         # Radio buttons for MP3 and MP4 conversion type
         radio_button_font = tkFont.Font(family="Helvetica", size=12)
         self.style.configure("MP3.TRadiobutton", foreground='orange', font=radio_button_font, padding=(20, 10))
         self.style.configure("MP4.TRadiobutton", foreground='blue', font=radio_button_font, padding=(20, 10))
-        self.mp3_radio_button = ttk.Radiobutton(self, text="MP3", value="mp3",style="MP3.TRadiobutton", command=self.mp3_radio_button_command)
-        self.mp4_radio_button = ttk.Radiobutton(self, text="MP4", value="mp4",style="MP4.TRadiobutton", command=self.mp4_radio_button_command)
+        self.mp3_radio_button = ttk.Radiobutton(self, text="MP3", value="mp3", style="MP3.TRadiobutton",
+                                                command=self.mp3_radio_button_command)
+        self.mp4_radio_button = ttk.Radiobutton(self, text="MP4", value="mp4", style="MP4.TRadiobutton",
+                                                command=self.mp4_radio_button_command)
         self.mp3_radio_button.pack(pady=5)
         self.mp4_radio_button.pack(pady=5)
 
-         # Quality type label
+        # Quality type label
         quality_type_font = tkFont.Font(family="Helvetica", size=12, weight="bold")
-        quality_type_label = ttk.Label(self, text="Stream Quality:", font=quality_type_font, foreground="#ffffff", background="#1e1e1e")
+        quality_type_label = ttk.Label(self, text="Stream Quality:", font=quality_type_font, foreground="#ffffff",
+                                       background="#1e1e1e")
         quality_type_label.pack(pady=5)
         # The video quality preference list
-        self.quality_list = tk.Listbox(self, foreground="#ffffff", background="#333333", selectbackground="#4c4c4c", height=2, width=2)
+        self.quality_list = tk.Listbox(self, foreground="#ffffff", background="#333333", selectbackground="#4c4c4c",
+                                       height=2, width=2)
         self.quality_list.pack(pady=10, padx=10, fill="x")
 
-         # The button lets to open a path to save file
+        # The button lets to open a path to save file
         save_button_font = tkFont.Font(family="Helvetica", size=20, weight="bold")
         self.style.configure("SaveButton.TButton", foreground='blue', font=save_button_font, padding=(10, 5))
-        save_button = ttk.Button(self, text="Save File", style='SaveButton.TButton', command=lambda: self.open_file_selector())
+        save_button = ttk.Button(self, text="Save File", style='SaveButton.TButton',
+                                 command=lambda: self.open_file_selector())
         save_button.pack(pady=10, padx=20, fill="x")
 
         # The big button for converting.
         convert_button_font = tkFont.Font(family="Helvetica", size=20, weight="bold")
         self.style.configure("ConvertButton.TButton", foreground='green', font=convert_button_font, padding=(20, 10))
-        convert_button = ttk.Button(self, text="Convert", style='ConvertButton.TButton',command=lambda:self.convert_button_command)
+        convert_button = ttk.Button(self, text="Convert", style='ConvertButton.TButton',
+                                    command=lambda: self.convert_button_command)
         convert_button.pack(pady=20, padx=20, fill="x")
         self.quality_list.insert(1, "Max")
         self.quality_list.insert(2, "Medium")
@@ -89,7 +101,6 @@ class App(tk.Tk):
         yt_url = self.url_entry.get()
 
         print("Convert Button Clicked!")
-      
 
         # stream_quality = str(self.quality_list.get(self.quality_list.curselection()))
         print(stream_quality)
@@ -101,7 +112,6 @@ class App(tk.Tk):
             convert.convert_audio(yt_url)
         else:
             print("Error: Please Select A Conversion Type!")
-
 
     def mp3_radio_button_command(self):
         print("MP3 MODE SELECTED!")
@@ -170,7 +180,6 @@ class Conversion():
 
         stream.download()
         print("YouTube Video converted to mp3 successfully!")
-
 
 
 if __name__ == "__main__":
