@@ -8,12 +8,11 @@ import requests
 from bs4 import BeautifulSoup
 from moviepy.editor import AudioFileClip
 import os
-
-mp3_mode = False
-mp4_mode = False
-stream_quality = ''
-file_save_location = ''
-video_name = ''
+from graph import *
+from datetime import datetime
+import csv
+from global_variables import *
+import re
 
 
 class App(tk.Tk):
@@ -135,6 +134,9 @@ class App(tk.Tk):
                                  command=lambda: self.open_file_selector())
         actions_menu.add_command(label='Quit', command=lambda: self.quit_app())
 
+        # Initialize CSV file if empty
+        self.create_conversion_history_csv_file()
+
     # Command functions
     def convert_button_command(self):
         global stream_quality
@@ -171,6 +173,18 @@ class App(tk.Tk):
         except tk.TclError:
             print("Error: Please Select The Stream Quality!")
 
+    def create_conversion_history_csv_file(self):
+        """
+        This function reads the csv file and creates the headers if empty
+        :return:
+        """
+        if os.path.getsize(conversion_records) == 0:
+            with open(conversion_records, 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(
+                    ['Conversion Type', 'Video Name', 'File Size (MB)',
+                     'Datetime'])
+
     def mp3_radio_button_command(self):
         """
         Selects mp3 mode.
@@ -195,6 +209,8 @@ class App(tk.Tk):
 
     def view_graph_button_command(self):
         print("View Graph Button Clicked!")
+        graphing = Graph()
+        graphing.__init__()
 
     def open_file_selector(self):
         """
@@ -233,29 +249,47 @@ class Conversion():
         :param yt_url:
         :return:
         """
+        # The current date in format Day/Month/Year Hour:Minute:Seconds
+        date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
         video = YouTube(yt_url, use_oauth=True, allow_oauth_cache=True)
+        file_size = 0
 
         # get video title
         video_title = self.fetch_yt_video_title(yt_url)
         print(f"Converting: {video_title} @{yt_url}")
 
+        # Make the video title a legal name for file saving
+        fixed_title = re.sub(r'[<>:"/\\|?*]', '', video_title)
+        fixed_title = fixed_title.replace(' ', '_')
+
         # convert based on specific stream quality
         if stream_quality == "Max":
             stream = video.streams.get_highest_resolution()
-            stream.download(output_path=file_save_location)
+            file_size = stream.filesize_mb  # get file size in mb
+            stream.download(output_path=file_save_location,
+                            filename=f"{fixed_title}.mp4")
 
         elif stream_quality == "Medium":
             stream = video.streams.filter(res="720p",
                                           file_extension='mp4').first()
-            stream.download(output_path=file_save_location)
+            file_size = stream.filesize_mb  # get file size in mb
+            stream.download(output_path=file_save_location,
+                            filename=f"{fixed_title}.mp4")
 
         elif stream_quality == "Low":
             stream = video.streams.filter(res="480p",
                                           file_extension='mp4').first()
-            stream.download(output_path=file_save_location)
-
+            file_size = stream.filesize_mb  # get file size in mb
+            stream.download(output_path=file_save_location,
+                            filename=f"{fixed_title}.mp4")
         else:
             print(f"You Did Not Select A Stream Quality!")
+
+        # Save the current conversion in the conversion_history.csv file
+        with open(conversion_records, 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['MP4', video_title, file_size, date])
 
         print("YouTube Video Converted to mp4 successfully!")
 
@@ -266,33 +300,52 @@ class Conversion():
         :return:
         """
         audio_file = ''
+        file_size = 0
+
+        # The current date in format Day/Month/Year Hour:Minute:Seconds
+        date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+        # get YT URL.
         video = pytube.YouTube(yt_url, use_oauth=True, allow_oauth_cache=True)
 
         # get video title
         video_title = self.fetch_yt_video_title(yt_url)
         print(f"Converting: {video_title} @{yt_url}")
 
+        # Make the video title a legal name for file saving
+        fixed_title = re.sub(r'[<>:"/\\|?*]', '', video_title)
+        fixed_title = fixed_title.replace(' ', '_')
+
         # convert based on specific stream quality
         if stream_quality == "Max":
             stream = video.streams.filter(only_audio=True).order_by(
                 'abr').last()
+            file_size = stream.filesize_mb  # get file size in mb
             audio_file = stream.download(output_path=file_save_location)
         elif stream_quality == "Medium":
             stream = video.streams.filter(only_audio=True).order_by(
                 'abr').first()
+            file_size = stream.filesize_mb  # get file size in mb
             audio_file = stream.download(output_path=file_save_location)
         elif stream_quality == "Low":
             stream = video.streams.filter(only_audio=True).order_by(
                 'abr').first()
+            file_size = stream.filesize_mb  # get file size in mb
             audio_file = stream.download(output_path=file_save_location)
         else:
             print(f"You Did Not Select A Stream Quality!")
 
         # Convert the PyTube WebM audio file to MP3
         audio = AudioFileClip(audio_file)
-        audio.write_audiofile(f"{file_save_location}/{video_title}.mp3")
+        audio.write_audiofile(f"{file_save_location}/{fixed_title}.mp3")
         os.remove(audio_file)  # remove original WebM file created by PyTube
         audio.close()
+
+        # Save the current conversion in the conversion_history.csv file
+        with open(conversion_records, 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['MP3', video_title, file_size, date])
+
         print("YouTube Video converted to mp3 successfully!")
 
     def audio_playlist(self):

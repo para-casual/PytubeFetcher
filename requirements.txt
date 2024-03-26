@@ -1,5 +1,8 @@
-ttkthemes
-pytube
-requests
-beautifulsoup4
-moviepy
+ttkthemes~=3.2.2
+pytube~=15.0.0
+requests~=2.30.0
+beautifulsoup4~=4.11.1
+moviepy~=1.0.3
+future~=0.18.2
+matplotlib~=3.5.2
+pandas~=1.4.3
