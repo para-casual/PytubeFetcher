@@ -1,0 +1,6 @@
+tk
+ttkbootstrap
+pytube
+requests
+beautifulsoup4
+moviepy

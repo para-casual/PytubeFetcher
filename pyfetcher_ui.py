@@ -3,15 +3,21 @@ import tkinter.font as tkFont
 from tkinter import ttk, filedialog
 from ttkthemes import ThemedStyle
 import pytube
-from pytube import Playlist
+from pytube import YouTube, Playlist
+import requests
+from bs4 import BeautifulSoup
+from moviepy.editor import AudioFileClip
+import os
 
 mp3_mode = False
 mp4_mode = False
-stream_quality = 'Max'
+stream_quality = ''
 file_save_location = ''
+video_name = ''
 
 
 class App(tk.Tk):
+    # UI screen setup
     width = 800
     height = 700
 
@@ -34,84 +40,125 @@ class App(tk.Tk):
 
         # The title label
         title_font = tkFont.Font(family="Helvetica", size=30, weight="bold")
-        title_label = ttk.Label(self, text="PyFetcher", font=title_font, foreground="red", background="#1e1e1e")
+        title_label = ttk.Label(self, text="PyFetcher", font=title_font,
+                                foreground="red", background="#1e1e1e")
         title_label.pack(pady=25)
 
         # The enter URL label
         enter_url_font = tkFont.Font(family="Helvetica", size=12, weight="bold")
-        enter_url_font = ttk.Label(self, text="Enter The YT URL:", font=enter_url_font, foreground="#ffffff",
+        enter_url_font = ttk.Label(self, text="Enter The YT URL:",
+                                   font=enter_url_font, foreground="#ffffff",
                                    background="#1e1e1e")
         enter_url_font.pack(pady=2)
         # The YouTube URL entry field.
         url_font = tkFont.Font(family="Helvetica", size=14)
-        self.url_entry = ttk.Entry(self, font=url_font, foreground="black", background="#333333")
+        self.url_entry = ttk.Entry(self, font=url_font, foreground="black",
+                                   background="#333333")
         self.url_entry.pack(pady=10, padx=20, fill="x")
 
         # Conversion type label
-        conversion_type_font = tkFont.Font(family="Helvetica", size=14, weight="bold")
-        conversion_type_label = ttk.Label(self, text="Conversion Type:", font=conversion_type_font,
-                                          foreground="#ffffff", background="#1e1e1e")
+        conversion_type_font = tkFont.Font(family="Helvetica", size=14,
+                                           weight="bold")
+        conversion_type_label = ttk.Label(self, text="Conversion Type:",
+                                          font=conversion_type_font,
+                                          foreground="#ffffff",
+                                          background="#1e1e1e")
         conversion_type_label.pack(pady=10)
 
         # Radio buttons for MP3 and MP4 conversion type
         radio_button_font = tkFont.Font(family="Helvetica", size=12)
-        self.style.configure("MP3.TRadiobutton", foreground='orange', font=radio_button_font, padding=(20, 10))
-        self.style.configure("MP4.TRadiobutton", foreground='blue', font=radio_button_font, padding=(20, 10))
-        self.mp3_radio_button = ttk.Radiobutton(self, text="MP3", value="mp3", style="MP3.TRadiobutton",
+        self.style.configure("MP3.TRadiobutton", foreground='orange',
+                             font=radio_button_font, padding=(20, 10))
+        self.style.configure("MP4.TRadiobutton", foreground='blue',
+                             font=radio_button_font, padding=(20, 10))
+        self.mp3_radio_button = ttk.Radiobutton(self, text="MP3", value="mp3",
+                                                style="MP3.TRadiobutton",
                                                 command=self.mp3_radio_button_command)
-        self.mp4_radio_button = ttk.Radiobutton(self, text="MP4", value="mp4", style="MP4.TRadiobutton",
+        self.mp4_radio_button = ttk.Radiobutton(self, text="MP4", value="mp4",
+                                                style="MP4.TRadiobutton",
                                                 command=self.mp4_radio_button_command)
         self.mp3_radio_button.pack(pady=5)
         self.mp4_radio_button.pack(pady=5)
 
         # Quality type label
-        quality_type_font = tkFont.Font(family="Helvetica", size=12, weight="bold")
-        quality_type_label = ttk.Label(self, text="Stream Quality:", font=quality_type_font, foreground="#ffffff",
+        quality_type_font = tkFont.Font(family="Helvetica", size=12,
+                                        weight="bold")
+        quality_type_label = ttk.Label(self, text="Stream Quality:",
+                                       font=quality_type_font,
+                                       foreground="#ffffff",
                                        background="#1e1e1e")
         quality_type_label.pack(pady=5)
         # The video quality preference list
-        self.quality_list = tk.Listbox(self, foreground="#ffffff", background="#333333", selectbackground="#4c4c4c",
+        self.quality_list = tk.Listbox(self, foreground="#ffffff",
+                                       background="#333333",
+                                       selectbackground="#4c4c4c",
                                        height=2, width=2)
         self.quality_list.pack(pady=10, padx=10, fill="x")
 
         # The button lets to open a path to save file
-        save_button_font = tkFont.Font(family="Helvetica", size=20, weight="bold")
-        self.style.configure("SaveButton.TButton", foreground='blue', font=save_button_font, padding=(10, 5))
-        save_button = ttk.Button(self, text="Save File", style='SaveButton.TButton',
+        save_button_font = tkFont.Font(family="Helvetica", size=20,
+                                       weight="bold")
+        self.style.configure("SaveButton.TButton", foreground='blue',
+                             font=save_button_font, padding=(10, 5))
+        save_button = ttk.Button(self, text="Save File",
+                                 style='SaveButton.TButton',
                                  command=lambda: self.open_file_selector())
         save_button.pack(pady=10, padx=20, fill="x")
 
         # The big button for converting.
-        convert_button_font = tkFont.Font(family="Helvetica", size=20, weight="bold")
-        self.style.configure("ConvertButton.TButton", foreground='green', font=convert_button_font, padding=(20, 10))
-        convert_button = ttk.Button(self, text="Convert", style='ConvertButton.TButton',
-                                    command=lambda: self.convert_button_command)
+        convert_button_font = tkFont.Font(family="Helvetica", size=20,
+                                          weight="bold")
+        self.style.configure("ConvertButton.TButton", foreground='green',
+                             font=convert_button_font, padding=(20, 10))
+        convert_button = ttk.Button(self, text="Convert",
+                                    style='ConvertButton.TButton',
+                                    command=lambda: self.convert_button_command())
         convert_button.pack(pady=20, padx=20, fill="x")
         self.quality_list.insert(1, "Max")
         self.quality_list.insert(2, "Medium")
         self.quality_list.insert(3, "Low")
 
         # The button for viewing a graph from conversion history
-        self.view_graph_button = ttk.Button(self, text="View Graph", command=self.view_graph_button_command)
+        self.view_graph_button = ttk.Button(self, text="View Graph",
+                                            command=self.view_graph_button_command)
         self.view_graph_button.pack(pady=10, padx=10, side="bottom", anchor="e")
 
-    # Command functions
+        # Command functions
+
     def convert_button_command(self):
         global stream_quality
-        yt_url = self.url_entry.get()
-
         print("Convert Button Clicked!")
 
-        # stream_quality = str(self.quality_list.get(self.quality_list.curselection()))
-        print(stream_quality)
+        # get YT url.
+        yt_url = self.url_entry.get()
 
-        convert = Conversion()
-        if mp4_mode:
-            convert.convert_video(yt_url)
-        elif mp3_mode:
-            convert.convert_audio(yt_url)
-        else:
-            print("Error: Please Select A Conversion Type!")
+        try:
+            selected_quality = self.quality_list.get(
+                self.quality_list.curselection())
+            stream_quality = selected_quality
+            print(f"Selected Quality: {stream_quality}")
+
+            if not yt_url:
+                print("Error: Please enter a YouTube URL!")
+                return
+
+            if not mp3_mode and not mp4_mode:
+                print("Error: Please select a conversion type (MP3 or MP4)!")
+                return
+
+            if not file_save_location:
+                print("Error: Please specify a file save location!")
+                return
+
+            convert = Conversion()
+            if mp4_mode:
+                convert.convert_video(yt_url)
+            elif mp3_mode:
+                convert.convert_audio(yt_url)
+            else:
+                print("Error: Please Select A Conversion Type!")
+        except tk.TclError:
+            print("Error: Please Select The Stream Quality!")
 
     def mp3_radio_button_command(self):
         print("MP3 MODE SELECTED!")
@@ -154,32 +201,97 @@ class Conversion():
         pass
 
     def convert_video(self, yt_url):
-        video = pytube.YouTube(yt_url)
+        """
+        Converts to video mp4.
+        :param yt_url:
+        :return:
+        """
+        video = YouTube(yt_url, use_oauth=True, allow_oauth_cache=True)
+
+        # get video title
+        video_title = self.fetch_yt_video_title(yt_url)
+        print(f"Converting: {video_title} @{yt_url}")
+
+        # convert based on specific stream quality
         if stream_quality == "Max":
             stream = video.streams.get_highest_resolution()
+            stream.download(output_path=file_save_location)
+
         elif stream_quality == "Medium":
-            stream = video.streams.filter(progressive=True, file_extension='mp4').last()
+            stream = video.streams.filter(res="720p",
+                                          file_extension='mp4').first()
+            stream.download(output_path=file_save_location)
+
         elif stream_quality == "Low":
-            stream = video.streams.filter(progressive=True, file_extension='mp4').first()
+            stream = video.streams.filter(res="480p",
+                                          file_extension='mp4').first()
+            stream.download(output_path=file_save_location)
+
         else:
             print(f"You Did Not Select A Stream Quality!")
 
-        stream.download()
         print("YouTube Video Converted to mp4 successfully!")
 
     def convert_audio(self, yt_url):
-        video = pytube.YouTube(yt_url)
+        """
+        Converts to audio mp3.
+        :param yt_url:
+        :return:
+        """
+        audio_file = ''
+        video = pytube.YouTube(yt_url, use_oauth=True, allow_oauth_cache=True)
+
+        # get video title
+        video_title = self.fetch_yt_video_title(yt_url)
+        print(f"Converting: {video_title} @{yt_url}")
+
+        # convert based on specific stream quality
         if stream_quality == "Max":
-            stream = video.streams.filter(only_audio=True).order_by('abr').last()
+            stream = video.streams.filter(only_audio=True).order_by(
+                'abr').last()
+            audio_file = stream.download(output_path=file_save_location)
         elif stream_quality == "Medium":
-            stream = video.streams.filter(only_audio=True).order_by('abr').first()
+            stream = video.streams.filter(only_audio=True).order_by(
+                'abr').first()
+            audio_file = stream.download(output_path=file_save_location)
         elif stream_quality == "Low":
-            stream = video.streams.filter(only_audio=True).order_by('abr').first()
+            stream = video.streams.filter(only_audio=True).order_by(
+                'abr').first()
+            audio_file = stream.download(output_path=file_save_location)
         else:
             print(f"You Did Not Select A Stream Quality!")
 
-        stream.download()
+        # Convert the PyTube WebM audio file to MP3
+        audio = AudioFileClip(audio_file)
+        audio.write_audiofile(f"{file_save_location}/{video_title}.mp3")
+        os.remove(audio_file)  # remove original WebM file created by PyTube
+        audio.close()
         print("YouTube Video converted to mp3 successfully!")
+
+    def audio_playlist(self):
+        """
+        Logic for converting a playlist for audio mp3.
+        :return:
+        """
+        pass
+
+    def video_playlist(self):
+        """
+        Logic for converting a playlist for video mp4.
+        :return:
+        """
+        pass
+
+    def fetch_yt_video_title(self, url):
+        """
+        This function gets fetches title of the YouTube video from URL.
+
+        :return: str
+        """
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        title = soup.find('title').string
+        return title[:-10]
 
 
 if __name__ == "__main__":
