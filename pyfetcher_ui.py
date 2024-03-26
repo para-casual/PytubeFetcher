@@ -261,7 +261,6 @@ class Conversion():
 
         # Make the video title a legal name for file saving
         fixed_title = re.sub(r'[<>:"/\\|?*]', '', video_title)
-        fixed_title = fixed_title.replace(' ', '_')
 
         # convert based on specific stream quality
         if stream_quality == "Max":
@@ -314,7 +313,6 @@ class Conversion():
 
         # Make the video title a legal name for file saving
         fixed_title = re.sub(r'[<>:"/\\|?*]', '', video_title)
-        fixed_title = fixed_title.replace(' ', '_')
 
         # convert based on specific stream quality
         if stream_quality == "Max":
