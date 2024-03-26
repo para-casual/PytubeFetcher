@@ -1,6 +1,6 @@
 import tkinter as tk
 import tkinter.font as tkFont
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, messagebox
 from ttkthemes import ThemedStyle
 import pytube
 from pytube import YouTube, Playlist
@@ -112,7 +112,8 @@ class App(tk.Tk):
                              font=convert_button_font, padding=(20, 10))
         convert_button = ttk.Button(self, text="Convert",
                                     style='ConvertButton.TButton',
-                                    command=lambda: self.convert_button_command())
+                                    command=lambda:
+                                    self.convert_button_command())
         convert_button.pack(pady=20, padx=20, fill="x")
         self.quality_list.insert(1, "Max")
         self.quality_list.insert(2, "Medium")
@@ -120,11 +121,21 @@ class App(tk.Tk):
 
         # The button for viewing a graph from conversion history
         self.view_graph_button = ttk.Button(self, text="View Graph",
-                                            command=self.view_graph_button_command)
+                                            command=lambda:
+                                            self.view_graph_button_command())
         self.view_graph_button.pack(pady=10, padx=10, side="bottom", anchor="e")
 
-        # Command functions
+        # create action menus for conversion app
+        # Create menu box
+        self.menu_box = tk.Menu(self)
+        self.config(menu=self.menu_box)
+        actions_menu = tk.Menu(self.menu_box, tearoff=0)
+        self.menu_box.add_cascade(label="Actions", menu=actions_menu)
+        actions_menu.add_command(label='Save File Location',
+                                 command=lambda: self.open_file_selector())
+        actions_menu.add_command(label='Quit', command=lambda: self.quit_app())
 
+    # Command functions
     def convert_button_command(self):
         global stream_quality
         print("Convert Button Clicked!")
@@ -161,6 +172,10 @@ class App(tk.Tk):
             print("Error: Please Select The Stream Quality!")
 
     def mp3_radio_button_command(self):
+        """
+        Selects mp3 mode.
+        :return:
+        """
         print("MP3 MODE SELECTED!")
         global mp3_mode
         global mp4_mode
@@ -168,6 +183,10 @@ class App(tk.Tk):
         mp4_mode = False
 
     def mp4_radio_button_command(self):
+        """
+        Selects mp4 mode.
+        :return:
+        """
         print("MP4 MODE SELECTED!")
         global mp3_mode
         global mp4_mode
@@ -194,6 +213,14 @@ class App(tk.Tk):
 
         except Exception as e:
             print(e)
+
+    def quit_app(self):
+        """
+        Quits the app.
+        :return:
+        """
+        if messagebox.askokcancel("Quit PyFetcher", "Do you want to quit?"):
+            self.quit()
 
 
 class Conversion():
