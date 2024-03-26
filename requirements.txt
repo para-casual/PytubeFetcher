@@ -1,5 +1,5 @@
-tk
-ttkbootstrap
+tkinter
+ttkthemes
 pytube
 requests
 beautifulsoup4
