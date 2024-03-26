@@ -9,3 +9,8 @@
 - Download from Playlists.
 - Batch download multiple links.
 - Visualize conversion data as graphs.
+---
+  ## Requirements:
+  ```
+  pip install -r requirements.txt
+  ```
