@@ -13,6 +13,7 @@ from datetime import datetime
 import csv
 from global_variables import *
 import re
+import threading
 
 
 class App(tk.Tk):
@@ -163,15 +164,28 @@ class App(tk.Tk):
                 print("Error: Please specify a file save location!")
                 return
 
-            convert = Conversion()
-            if mp4_mode:
-                convert.convert_video(yt_url)
-            elif mp3_mode:
-                convert.convert_audio(yt_url)
-            else:
-                print("Error: Please Select A Conversion Type!")
+            def conversion_thread():
+                """
+                Uses multiple CPU Threads to do multiple tasks at once
+                without freezing.
+                The UI remains responsive during the process, allowing
+                user to click any UI element without window freezing.
+                :return:
+                """
+                convert = Conversion()
+                if mp4_mode:
+                    convert.convert_video(yt_url)
+                elif mp3_mode:
+                    convert.convert_audio(yt_url)
+                else:
+                    print("Error: Please Select A Conversion Type (MP3/MP4)!")
+
+            # Create the thread for conversion.
+            yt_conversion_thread = threading.Thread(target=conversion_thread)
+            yt_conversion_thread.start()
+
         except tk.TclError:
-            print("Error: Please Select The Stream Quality!")
+            print("Error: Please Select The YT Conversion Quality!")
 
     def create_conversion_history_csv_file(self):
         """
