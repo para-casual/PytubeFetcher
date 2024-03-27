@@ -223,8 +223,7 @@ class App(tk.Tk):
 
     def view_graph_button_command(self):
         print("View Graph Button Clicked!")
-        graphing = Graph()
-        graphing.__init__()
+        Graph()
 
     def open_file_selector(self):
         """
