@@ -88,12 +88,15 @@ class App(tk.Tk):
                                        foreground="#ffffff",
                                        background="#1e1e1e")
         quality_type_label.pack(pady=5)
-        # The video quality preference list
-        self.quality_list = tk.Listbox(self, foreground="#ffffff",
-                                       background="#333333",
-                                       selectbackground="#4c4c4c",
-                                       height=2, width=2)
-        self.quality_list.pack(pady=10, padx=10, fill="x")
+
+        # The video quality preference combobox list
+        self.selected_stream_quality = tk.StringVar()
+        self.stream_quality_combobox = ttk.Combobox(self, state="readonly",
+                                                    textvariable=self.
+                                                    selected_stream_quality)
+        self.stream_quality_combobox["values"] = ("Max", "Medium", "Low")
+        self.stream_quality_combobox.current(0)  # Max is the default value
+        self.stream_quality_combobox.pack(padx=10, pady=6)
 
         # The button lets to open a path to save file
         save_button_font = tkFont.Font(family="Helvetica", size=20,
@@ -115,9 +118,6 @@ class App(tk.Tk):
                                     command=lambda:
                                     self.convert_button_command())
         convert_button.pack(pady=20, padx=20, fill="x")
-        self.quality_list.insert(1, "Max")
-        self.quality_list.insert(2, "Medium")
-        self.quality_list.insert(3, "Low")
 
         # The button for viewing a graph from conversion history
         self.view_graph_button = ttk.Button(self, text="View Graph",
@@ -147,13 +147,11 @@ class App(tk.Tk):
         yt_url = self.url_entry.get()
 
         try:
-            selected_quality = self.quality_list.get(
-                self.quality_list.curselection())
-            stream_quality = selected_quality
+            stream_quality = self.selected_stream_quality.get()
             print(f"Selected Quality: {stream_quality}")
 
             if not yt_url:
-                print("Error: Please enter a YouTube URL!")
+                print("Error: Please input a YouTube URL!")
                 return
 
             if not mp3_mode and not mp4_mode:
@@ -162,6 +160,10 @@ class App(tk.Tk):
 
             if not file_save_location:
                 print("Error: Please specify a file save location!")
+                return
+
+            if not self.is_valid_url(yt_url):
+                print("Error: Please enter a Valid YouTube URL!")
                 return
 
             def conversion_thread():
@@ -178,7 +180,7 @@ class App(tk.Tk):
                 elif mp3_mode:
                     convert.convert_audio(yt_url)
                 else:
-                    print("Error: Please Select A Conversion Type (MP3/MP4)!")
+                    print("Error: Please Select A Conversion Type (MP3/MP4!")
 
             # Create the thread for conversion.
             yt_conversion_thread = threading.Thread(target=conversion_thread)
@@ -186,6 +188,26 @@ class App(tk.Tk):
 
         except tk.TclError:
             print("Error: Please Select The YT Conversion Quality!")
+
+        except Exception as e:
+            print(f"Error: {e}")
+
+    def is_valid_url(self, url):
+        """
+        Checks if the YouTube URL is valid and is genuine.
+
+        :return:
+        """
+        try:
+            r = requests.get(url)
+            site = 'youtube.com'
+            shortcut = 'youtu.be'
+            if "Video unavailable" not in r.text and (site in url or shortcut):
+                return True
+            else:
+                return False
+        except Exception as e:
+            print(e)
 
     def create_conversion_history_csv_file(self):
         """
