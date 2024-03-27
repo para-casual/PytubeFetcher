@@ -397,7 +397,7 @@ class Conversion():
 
     def fetch_yt_video_title(self, url):
         """
-        This function gets fetches title of the YouTube video from URL.
+        This function fetches the title of the YouTube video via URL.
 
         :return: str
         """
