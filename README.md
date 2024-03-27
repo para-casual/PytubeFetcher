@@ -7,10 +7,12 @@
 - Download copyright-free videos up to 1080p.
 - Download copyright-free music up to 320kbps.
 - Download from Playlists.
-- Batch download multiple links.
-- Visualize conversion data as graphs.
+- Can convert MP4 and MP3 simultaneously during conversion (thanks to threading).
+- Visualize conversion data (mp3/mp4 download count, file size over time) as graphs.
 ---
-  ## Requirements:
-  ```
-  pip install -r requirements.txt
-  ```
+## Module Requirements:
+```
+pip install -r requirements.txt
+```
+---
+
