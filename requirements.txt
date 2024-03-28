@@ -1,6 +1,6 @@
 ttkthemes~=3.2.2
 pytube~=15.0.0
-requests~=2.30.0
+requests>=2.31.0
 beautifulsoup4~=4.11.1
 moviepy~=1.0.3
 future~=0.18.2
