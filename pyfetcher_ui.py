@@ -168,7 +168,7 @@ class App(tk.Tk):
 
             def conversion_thread():
                 """
-                Uses multiple CPU Threads to do multiple tasks at once
+                Uses multiple Threads to do multiple tasks at once
                 without freezing.
                 The UI remains responsive during the process, allowing
                 user to click any UI element without window freezing.
@@ -274,10 +274,13 @@ class App(tk.Tk):
             self.quit()
 
 
-class Conversion():
-    def __init__(self):
-        pass
-
+class Conversion:
+    """
+    This python class contains code for the PyTube conversion logic which allows
+    the program to read the data from the UI elements like the text entry,
+    stream quality, and radio buttons to convert to a mp3 or mp4 from a YouTube
+    video accordingly.
+    """
     def convert_video(self, yt_url):
         """
         Converts to video mp4.
