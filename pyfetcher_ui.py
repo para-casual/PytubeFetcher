@@ -2,7 +2,6 @@ import tkinter as tk
 import tkinter.font as tkFont
 from tkinter import ttk, filedialog, messagebox
 from ttkthemes import ThemedStyle
-import pytube
 from pytube import YouTube, Playlist
 import requests
 from bs4 import BeautifulSoup
@@ -14,6 +13,28 @@ import csv
 from global_variables import *
 import re
 import threading
+
+"""
+PyFetcher UI
+
+This script is responsible for setting up the window and  UI elements 
+such as the buttons, text entry, radio button, and lists on the screen.
+
+It also has logic for conversion using the PyTube library.
+
+Credit: https://pytube.io/en/latest/
+        Kaushal Bhingaradia: YouPy
+
+Note: Some code was borrowed and modified from Kaushal's old PyTube 
+project which allows it to work with this project. Some things can 
+not be fully rewritten since some functions are standardized and are
+required for most of the logic of this conversion to work or be 
+usable. The big improvement is that this is fully written to be OOP 
+and be persistent. This also lets you select your mp4/mp3 quality.
+
+MoviePy was used since it converts WebM format audio into MP3 while
+maintaining quality.
+"""
 
 
 class App(tk.Tk):
@@ -270,7 +291,7 @@ class App(tk.Tk):
         Quits the app.
         :return:
         """
-        if messagebox.askokcancel("Quit PyFetcher", "Do you want to quit?"):
+        if messagebox.askyesno("Quit PyFetcher", "Do you want to quit?"):
             self.quit()
 
 
@@ -281,6 +302,7 @@ class Conversion:
     stream quality, and radio buttons to convert to a mp3 or mp4 from a YouTube
     video accordingly.
     """
+
     def convert_video(self, yt_url):
         """
         Converts to video mp4.
@@ -290,7 +312,10 @@ class Conversion:
         # The current date in format Day/Month/Year Hour:Minute:Seconds
         date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        video = YouTube(yt_url, use_oauth=True, allow_oauth_cache=True)
+        # get YT URL and display progress bar for download
+        video = YouTube(yt_url, use_oauth=True, allow_oauth_cache=True,
+                        on_progress_callback=self.download_progress)
+        # File size in MB
         file_size = 0
 
         # get video title
@@ -337,13 +362,16 @@ class Conversion:
         :return:
         """
         audio_file = ''
+
+        # File size in MB
         file_size = 0
 
         # The current date in format Day/Month/Year Hour:Minute:Seconds
         date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        # get YT URL.
-        video = pytube.YouTube(yt_url, use_oauth=True, allow_oauth_cache=True)
+        # get YT URL and display progress bar for download
+        video = YouTube(yt_url, use_oauth=True, allow_oauth_cache=True,
+                        on_progress_callback=self.download_progress)
 
         # get video title
         video_title = self.fetch_yt_video_title(yt_url)
@@ -408,6 +436,18 @@ class Conversion:
         soup = BeautifulSoup(response.text, 'html.parser')
         title = soup.find('title').string
         return title[:-10]
+
+    def download_progress(self, stream, chunk, bytes_remaining):
+        """
+        This function displays a percent to show how much of the
+        download has progressed.
+
+        :return:
+        """
+        total_size = stream.filesize
+        bytes_downloaded = total_size - bytes_remaining
+        percentage_downloaded = bytes_downloaded / total_size * 100
+        print(f"{percentage_downloaded:.0f}% Downloaded!")
 
 
 if __name__ == "__main__":

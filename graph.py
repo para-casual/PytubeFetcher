@@ -17,7 +17,7 @@ class Graph:
         self.plot_bar_graph()
         print("Now viewing a line graph!")
         self.plot_line_graph()
-        print("Done!")
+        print("Done Viewing All Graphs!")
 
     def plot_bar_graph(self):
         """

@@ -2,7 +2,6 @@
 File for conversion logic
 """
 from pyfetcher_ui import stream_quality, file_save_location
-import pytube
 from pytube import YouTube, Playlist
 import requests
 from bs4 import BeautifulSoup
