@@ -10,7 +10,8 @@ class Graph:
 
     def __init__(self):
         # Read the lines from the CSV file
-        self.data = pd.read_csv('conversion_history.csv')
+        self.data = pd.read_csv('conversion_history.csv', encoding='utf8',
+                                encoding_errors='ignore')
 
         # Graph viewing
         print("Now viewing a bar graph!")

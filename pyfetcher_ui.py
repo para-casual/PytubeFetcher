@@ -158,10 +158,13 @@ class App(tk.Tk):
 
         # Status message label setup
         self.status_message = tk.StringVar()
-        self.status_message_label = ttk.Label(self, textvariable=self.status_message, foreground="#FF0000", background="#1e1e1e")
+        self.status_message_label = ttk.Label(self,
+                                              textvariable=self.status_message,
+                                              foreground="#FF0000",
+                                              background="#1e1e1e")
         self.status_message_label.pack(pady=10)
 
-# Initialize CSV file if empty
+        # Initialize CSV file if empty
         self.create_conversion_history_csv_file()
 
     # Command functions
@@ -181,7 +184,8 @@ class App(tk.Tk):
                 return
 
             if not mp3_mode and not mp4_mode:
-                self.status_message.set("Please select a conversion type (MP3 or MP4)!")
+                self.status_message.set("Please select a conversion type (MP3 "
+                                        "or MP4)!")
                 return
 
             if not file_save_location:
@@ -200,13 +204,19 @@ class App(tk.Tk):
                 user to click any UI element without window freezing.
                 :return:
                 """
+
                 convert = Conversion()
                 if mp4_mode:
+                    self.status_message.set(f"Converting to MP4!")
                     convert.convert_video(yt_url)
+                    self.status_message.set("Done!")
                 elif mp3_mode:
+                    self.status_message.set(f"Converting to MP3!")
                     convert.convert_audio(yt_url)
+                    self.status_message.set("Done!")
                 else:
-                    self.status_message.set("Please Select A Conversion Type (MP3/MP4!")
+                    self.status_message.set("Please Select A Conversion Type "
+                                            "(MP3/MP4!")
 
             # Create the thread for conversion.
             yt_conversion_thread = threading.Thread(target=conversion_thread)
@@ -242,7 +252,8 @@ class App(tk.Tk):
         :return:
         """
         if os.path.getsize(conversion_records) == 0:
-            with open(conversion_records, 'w', newline='') as file:
+            with open(conversion_records, 'w', newline='', encoding='utf8') \
+                    as file:
                 writer = csv.writer(file)
                 writer.writerow(
                     ['Conversion Type', 'Video Name', 'File Size (MB)',
@@ -287,6 +298,7 @@ class App(tk.Tk):
             file_save_location = file_path + '/'
 
             print(f"Saving to: {file_save_location}")
+            self.status_message.set(f"Saving to: {file_save_location}")
             return file_save_location
 
         except Exception as e:
