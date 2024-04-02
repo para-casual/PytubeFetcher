@@ -156,7 +156,12 @@ class App(tk.Tk):
                                  command=lambda: self.open_file_selector())
         actions_menu.add_command(label='Quit', command=lambda: self.quit_app())
 
-        # Initialize CSV file if empty
+        # Status message label setup
+        self.status_message = tk.StringVar()
+        self.status_message_label = ttk.Label(self, textvariable=self.status_message, foreground="#FF0000", background="#1e1e1e")
+        self.status_message_label.pack(pady=10)
+
+# Initialize CSV file if empty
         self.create_conversion_history_csv_file()
 
     # Command functions
@@ -172,19 +177,19 @@ class App(tk.Tk):
             print(f"Selected Quality: {stream_quality}")
 
             if not yt_url:
-                print("Error: Please input a YouTube URL!")
+                self.status_message.set("Please input a YouTube URL!")
                 return
 
             if not mp3_mode and not mp4_mode:
-                print("Error: Please select a conversion type (MP3 or MP4)!")
+                self.status_message.set("Please select a conversion type (MP3 or MP4)!")
                 return
 
             if not file_save_location:
-                print("Error: Please specify a file save location!")
+                self.status_message.set("Please specify a file save location!")
                 return
 
             if not self.is_valid_url(yt_url):
-                print("Error: Please enter a Valid YouTube URL!")
+                self.status_message.set("Please enter a Valid YouTube URL!")
                 return
 
             def conversion_thread():
@@ -201,17 +206,18 @@ class App(tk.Tk):
                 elif mp3_mode:
                     convert.convert_audio(yt_url)
                 else:
-                    print("Error: Please Select A Conversion Type (MP3/MP4!")
+                    self.status_message.set("Please Select A Conversion Type (MP3/MP4!")
 
             # Create the thread for conversion.
             yt_conversion_thread = threading.Thread(target=conversion_thread)
             yt_conversion_thread.start()
 
+
         except tk.TclError:
-            print("Error: Please Select The YT Conversion Quality!")
+            self.status_message.set("Please Select The YT Conversion Quality!")
 
         except Exception as e:
-            print(f"Error: {e}")
+            messagebox.showerror("Error", f"An unexpected error occurred: {e}")
 
     def is_valid_url(self, url):
         """
