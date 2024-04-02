@@ -5,7 +5,7 @@
 ---
 ## Features:
 - Download copyright-free videos up to 1080p.
-- Download copyright-free music up to 320kbps.
+- Download copyright-free music up to 128kbps (YouTube API limitations).
 - Download from Playlists.
 - Can convert MP4 and MP3 simultaneously during conversion (thanks to threading).
 - Visualize conversion data (mp3/mp4 download count, file size over time) as graphs.
