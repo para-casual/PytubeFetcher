@@ -321,57 +321,64 @@ class Conversion:
     video accordingly.
     """
 
+    def is_playlist(self, url):
+        """Check if the URL corresponds to a YouTube playlist."""
+        return 'list=' in url
+
     def convert_video(self, yt_url):
         """
         Converts to video mp4.
         :param yt_url:
         :return:
         """
-        # The current date in format Day/Month/Year Hour:Minute:Seconds
-        date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-
-        # get YT URL and display progress bar for download
-        video = YouTube(yt_url, use_oauth=True, allow_oauth_cache=True,
-                        on_progress_callback=self.download_progress)
-        # File size in MB
-        file_size = 0
-
-        # get video title
-        video_title = self.fetch_yt_video_title(yt_url)
-        print(f"Converting: {video_title} @{yt_url}")
-
-        # Make the video title a legal name for file saving
-        fixed_title = re.sub(r'[<>:"/\\|?*]', '', video_title)
-
-        # convert based on specific stream quality
-        if stream_quality == "Max":
-            stream = video.streams.get_highest_resolution()
-            file_size = stream.filesize_mb  # get file size in mb
-            stream.download(output_path=file_save_location,
-                            filename=f"{fixed_title}.mp4")
-
-        elif stream_quality == "Medium":
-            stream = video.streams.filter(res="720p",
-                                          file_extension='mp4').first()
-            file_size = stream.filesize_mb  # get file size in mb
-            stream.download(output_path=file_save_location,
-                            filename=f"{fixed_title}.mp4")
-
-        elif stream_quality == "Low":
-            stream = video.streams.filter(res="480p",
-                                          file_extension='mp4').first()
-            file_size = stream.filesize_mb  # get file size in mb
-            stream.download(output_path=file_save_location,
-                            filename=f"{fixed_title}.mp4")
+        if self.is_playlist(yt_url):
+            self.video_playlist(yt_url)
         else:
-            print(f"You Did Not Select A Stream Quality!")
+            # The current date in format Day/Month/Year Hour:Minute:Seconds
+            date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        # Save the current conversion in the conversion_history.csv file
-        with open(conversion_records, 'a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(['MP4', video_title, file_size, date])
+            # get YT URL and display progress bar for download
+            video = YouTube(yt_url, use_oauth=True, allow_oauth_cache=True,
+                            on_progress_callback=self.download_progress)
+            # File size in MB
+            file_size = 0
 
-        print("YouTube Video Converted to mp4 successfully!")
+            # get video title
+            video_title = self.fetch_yt_video_title(yt_url)
+            print(f"Converting: {video_title} @{yt_url}")
+
+            # Make the video title a legal name for file saving
+            fixed_title = re.sub(r'[<>:"/\\|?*]', '', video_title)
+
+            # convert based on specific stream quality
+            if stream_quality == "Max":
+                stream = video.streams.get_highest_resolution()
+                file_size = stream.filesize_mb  # get file size in mb
+                stream.download(output_path=file_save_location,
+                                filename=f"{fixed_title}.mp4")
+
+            elif stream_quality == "Medium":
+                stream = video.streams.filter(res="720p",
+                                              file_extension='mp4').first()
+                file_size = stream.filesize_mb  # get file size in mb
+                stream.download(output_path=file_save_location,
+                                filename=f"{fixed_title}.mp4")
+
+            elif stream_quality == "Low":
+                stream = video.streams.filter(res="480p",
+                                              file_extension='mp4').first()
+                file_size = stream.filesize_mb  # get file size in mb
+                stream.download(output_path=file_save_location,
+                                filename=f"{fixed_title}.mp4")
+            else:
+                print(f"You Did Not Select A Stream Quality!")
+
+            # Save the current conversion in the conversion_history.csv file
+            with open(conversion_records, 'a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['MP4', video_title, file_size, date])
+
+            print("YouTube Video Converted to mp4 successfully!")
 
     def convert_audio(self, yt_url):
         """
@@ -379,70 +386,77 @@ class Conversion:
         :param yt_url:
         :return:
         """
-        audio_file = ''
-
-        # File size in MB
-        file_size = 0
-
-        # The current date in format Day/Month/Year Hour:Minute:Seconds
-        date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-
-        # get YT URL and display progress bar for download
-        video = YouTube(yt_url, use_oauth=True, allow_oauth_cache=True,
-                        on_progress_callback=self.download_progress)
-
-        # get video title
-        video_title = self.fetch_yt_video_title(yt_url)
-        print(f"Converting: {video_title} @{yt_url}")
-
-        # Make the video title a legal name for file saving
-        fixed_title = re.sub(r'[<>:"/\\|?*]', '', video_title)
-
-        # convert based on specific stream quality
-        if stream_quality == "Max":
-            stream = video.streams.filter(only_audio=True).order_by(
-                'abr').last()
-            file_size = stream.filesize_mb  # get file size in mb
-            audio_file = stream.download(output_path=file_save_location)
-        elif stream_quality == "Medium":
-            stream = video.streams.filter(only_audio=True).order_by(
-                'abr').first()
-            file_size = stream.filesize_mb  # get file size in mb
-            audio_file = stream.download(output_path=file_save_location)
-        elif stream_quality == "Low":
-            stream = video.streams.filter(only_audio=True).order_by(
-                'abr').first()
-            file_size = stream.filesize_mb  # get file size in mb
-            audio_file = stream.download(output_path=file_save_location)
+        if self.is_playlist(yt_url):
+            self.audio_playlist(yt_url)
         else:
-            print(f"You Did Not Select A Stream Quality!")
+            audio_file = ''
 
-        # Convert the PyTube WebM audio file to MP3
-        audio = AudioFileClip(audio_file)
-        audio.write_audiofile(f"{file_save_location}/{fixed_title}.mp3")
-        os.remove(audio_file)  # remove original WebM file created by PyTube
-        audio.close()
+            # File size in MB
+            file_size = 0
 
-        # Save the current conversion in the conversion_history.csv file
-        with open(conversion_records, 'a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(['MP3', video_title, file_size, date])
+            # The current date in format Day/Month/Year Hour:Minute:Seconds
+            date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        print("YouTube Video converted to mp3 successfully!")
+            # get YT URL and display progress bar for download
+            video = YouTube(yt_url, use_oauth=True, allow_oauth_cache=True,
+                            on_progress_callback=self.download_progress)
 
-    def audio_playlist(self):
+            # get video title
+            video_title = self.fetch_yt_video_title(yt_url)
+            print(f"Converting: {video_title} @{yt_url}")
+
+            # Make the video title a legal name for file saving
+            fixed_title = re.sub(r'[<>:"/\\|?*]', '', video_title)
+
+            # convert based on specific stream quality
+            if stream_quality == "Max":
+                stream = video.streams.filter(only_audio=True).order_by(
+                    'abr').last()
+                file_size = stream.filesize_mb  # get file size in mb
+                audio_file = stream.download(output_path=file_save_location)
+            elif stream_quality == "Medium":
+                stream = video.streams.filter(only_audio=True).order_by(
+                    'abr').first()
+                file_size = stream.filesize_mb  # get file size in mb
+                audio_file = stream.download(output_path=file_save_location)
+            elif stream_quality == "Low":
+                stream = video.streams.filter(only_audio=True).order_by(
+                    'abr').first()
+                file_size = stream.filesize_mb  # get file size in mb
+                audio_file = stream.download(output_path=file_save_location)
+            else:
+                print(f"You Did Not Select A Stream Quality!")
+
+            # Convert the PyTube WebM audio file to MP3
+            audio = AudioFileClip(audio_file)
+            audio.write_audiofile(f"{file_save_location}/{fixed_title}.mp3")
+            os.remove(audio_file)  # remove original WebM file created by PyTube
+            audio.close()
+
+            # Save the current conversion in the conversion_history.csv file
+            with open(conversion_records, 'a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['MP3', video_title, file_size, date])
+
+            print("YouTube Video converted to mp3 successfully!")
+
+    def audio_playlist(self, playlist_url):
         """
         Logic for converting a playlist for audio mp3.
         :return:
         """
-        pass
+        playlist = Playlist(playlist_url)
+        for video_url in playlist.video_urls:
+            self.convert_audio(video_url)
 
-    def video_playlist(self):
+    def video_playlist(self, playlist_url):
         """
         Logic for converting a playlist for video mp4.
         :return:
         """
-        pass
+        playlist = Playlist(playlist_url)
+        for video_url in playlist.video_urls:
+            self.convert_video(video_url)
 
     def fetch_yt_video_title(self, url):
         """
