@@ -34,6 +34,11 @@ and be persistent. This also lets you select your mp4/mp3 quality.
 
 MoviePy was used since it converts WebM format audio into MP3 while
 maintaining quality.
+
+- The Conversion class could not be moved to the another python file due to
+a problem that we struggled to fix. The MoviePy module kept saying that the
+file is missing even though we imported everything properly. It was a hassle
+so we just kept it in this file since it works here.
 """
 
 
