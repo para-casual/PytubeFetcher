@@ -445,18 +445,34 @@ class Conversion:
         Logic for converting a playlist for audio mp3.
         :return:
         """
+        current_video = 0  # track count of current video
         playlist = Playlist(playlist_url)
+        print(f"\nStarted Converting Playlist: {playlist.title} @ "
+              f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}!\n")
         for video_url in playlist.video_urls:
             self.convert_audio(video_url)
+            current_video += 1
+            print(f"\n{current_video} Processed Out Of {len(playlist)} Videos!"
+                  f"\n")
+        print(f"\nFinished Converting Playlist: {playlist.title} @ "
+              f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}!\n")
 
     def video_playlist(self, playlist_url):
         """
         Logic for converting a playlist for video mp4.
         :return:
         """
+        current_video = 0  # track count of current video
         playlist = Playlist(playlist_url)
+        print(f"\nStarted Converting Playlist: {playlist.title} @ "
+              f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}!\n")
         for video_url in playlist.video_urls:
             self.convert_video(video_url)
+            current_video += 1
+            print(f"\n{current_video} Processed Out Of {len(playlist)} Videos!"
+                  f"\n")
+        print(f"\nFinished Converting Playlist: {playlist.title} @ "
+              f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}!\n")
 
     def fetch_yt_video_title(self, url):
         """
