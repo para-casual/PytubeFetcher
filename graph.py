@@ -47,7 +47,7 @@ class Graph:
         """
         plt.figure(figsize=(10, 6))
         plt.plot(self.data['Datetime'], self.data['File Size (MB)'], marker='o')
-        plt.xlabel('Datetime')
+        plt.xlabel('Datetime (dd/mm/yyyy hh:mm:ss)')
         plt.ylabel('File Size (MB)')
         plt.title('Conversion File Size Over Time')
         plt.xticks(rotation=50)
