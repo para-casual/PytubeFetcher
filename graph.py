@@ -1,7 +1,3 @@
-"""
-This file is for the graphing function based on records from
-conversion_history.csv
-"""
 import matplotlib.pyplot as plt
 import pandas as pd
 
