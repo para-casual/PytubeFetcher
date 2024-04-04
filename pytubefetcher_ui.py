@@ -1,3 +1,32 @@
+"""
+PyTubeFetcher UI
+
+App class is responsible for setting up the window and UI elements
+such as the buttons, text entry, radio button, and lists on the screen
+with the tkinter library.
+
+It also has logic for conversion using the PyTube, moviepy, requests,
+and BS4 library within the Conversion class
+
+Credit: https://pytube.io/en/latest/
+        Kaushal Bhingaradia: YouPy
+
+Note: Some code was borrowed and modified from Kaushal's old PyTube
+project, which allows it to work with this project. Some things cannot
+be fully rewritten since some functions are standardized and are
+required for most of the logic of this conversion to work or be
+usable. The big improvement is that this is fully written to be OOP
+and be persistent. This also lets you select your mp4/mp3 quality.
+
+MoviePy was used since it converts WebM format audio into MP3 while
+maintaining quality.
+
+- The Conversion class could not be moved to another python file due to
+a problem that we struggled to fix. The MoviePy module kept saying that the
+file is missing even though we imported everything properly and the file
+location was readable. It was a hassle, so we just kept it in this file
+since it works here.
+"""
 import tkinter as tk
 import tkinter.font as tkFont
 from tkinter import ttk, filedialog, messagebox
@@ -13,33 +42,6 @@ import csv
 from global_variables import *
 import re
 import threading
-
-"""
-PyFetcher UI
-
-This script is responsible for setting up the window and  UI elements 
-such as the buttons, text entry, radio button, and lists on the screen.
-
-It also has logic for conversion using the PyTube library.
-
-Credit: https://pytube.io/en/latest/
-        Kaushal Bhingaradia: YouPy
-
-Note: Some code was borrowed and modified from Kaushal's old PyTube 
-project which allows it to work with this project. Some things can 
-not be fully rewritten since some functions are standardized and are
-required for most of the logic of this conversion to work or be 
-usable. The big improvement is that this is fully written to be OOP 
-and be persistent. This also lets you select your mp4/mp3 quality.
-
-MoviePy was used since it converts WebM format audio into MP3 while
-maintaining quality.
-
-- The Conversion class could not be moved to the another python file due to
-a problem that we struggled to fix. The MoviePy module kept saying that the
-file is missing even though we imported everything properly. It was a hassle
-so we just kept it in this file since it works here.
-"""
 
 
 class App(tk.Tk):
@@ -215,17 +217,20 @@ class App(tk.Tk):
                 """
 
                 convert = Conversion()
-                # If mp4 mode is selected, convert to mp4 and display status update
+                # If mp4 mode is selected, convert to mp4 and display status
+                # update
                 if mp4_mode:
                     self.status_message.set(f"Converting to MP4!")
                     convert.convert_video(yt_url)
                     self.status_message.set("Done!")
-                # If mp3 mode is selected, convert to mp3 and display status update
+                # If mp3 mode is selected, convert to mp3 and display status
+                # update
                 elif mp3_mode:
                     self.status_message.set(f"Converting to MP3!")
                     convert.convert_audio(yt_url)
                     self.status_message.set("Done!")
-                # If no mode has been selected, display message telling user to select conversion type
+                # If no mode has been selected, display message telling user
+                # to select a conversion type
                 else:
                     self.status_message.set("Please Select A Conversion Type "
                                             "(MP3/MP4!")
@@ -233,7 +238,6 @@ class App(tk.Tk):
             # Create the thread for conversion.
             yt_conversion_thread = threading.Thread(target=conversion_thread)
             yt_conversion_thread.start()
-
 
         except tk.TclError:
             self.status_message.set("Please Select The YT Conversion Quality!")
