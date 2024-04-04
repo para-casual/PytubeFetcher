@@ -325,7 +325,7 @@ class App(tk.Tk):
         Quits the app.
         :return:
         """
-        if messagebox.askyesno("Quit PyFetcher", "Do you want to quit?"):
+        if messagebox.askyesno("Quit PyTubeFetcher", "Do you want to quit?"):
             self.quit()
 
 
