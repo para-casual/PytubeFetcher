@@ -56,7 +56,7 @@ class App(tk.Tk):
         self.style = ThemedStyle(self)
         self.style.set_theme("arc")
 
-        # Tkinter indow properties
+        # Tkinter window properties
         self.title("PyFetcher")
         self.geometry(f"{self.width}x{self.height}")
         self.resizable(False, False)
@@ -177,26 +177,30 @@ class App(tk.Tk):
         global stream_quality
         print("Convert Button Clicked!")
 
-        # get YT url.
+        # Get YouTube URL
         yt_url = self.url_entry.get()
 
         try:
+            # Get selected stream quality
             stream_quality = self.selected_stream_quality.get()
             print(f"Selected Quality: {stream_quality}")
 
+            # Check if user entered YouTube URL
             if not yt_url:
                 self.status_message.set("Please input a YouTube URL!")
                 return
 
+            # Check if user selected conversion mode
             if not mp3_mode and not mp4_mode:
                 self.status_message.set("Please select a conversion type (MP3 "
                                         "or MP4)!")
                 return
-
+            # Check if user selected file save location
             if not file_save_location:
                 self.status_message.set("Please specify a file save location!")
                 return
 
+            # Check if URL input is valid
             if not self.is_valid_url(yt_url):
                 self.status_message.set("Please enter a Valid YouTube URL!")
                 return
@@ -211,14 +215,17 @@ class App(tk.Tk):
                 """
 
                 convert = Conversion()
+                # If mp4 mode is selected, convert to mp4 and display status update
                 if mp4_mode:
                     self.status_message.set(f"Converting to MP4!")
                     convert.convert_video(yt_url)
                     self.status_message.set("Done!")
+                # If mp3 mode is selected, convert to mp3 and display status update
                 elif mp3_mode:
                     self.status_message.set(f"Converting to MP3!")
                     convert.convert_audio(yt_url)
                     self.status_message.set("Done!")
+                # If no mode has been selected, display message telling user to select conversion type
                 else:
                     self.status_message.set("Please Select A Conversion Type "
                                             "(MP3/MP4!")
