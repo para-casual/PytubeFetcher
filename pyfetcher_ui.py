@@ -57,7 +57,7 @@ class App(tk.Tk):
         self.style.set_theme("arc")
 
         # Tkinter window properties
-        self.title("PyFetcher")
+        self.title("PyTubeFetcher")
         self.geometry(f"{self.width}x{self.height}")
         self.resizable(False, False)
 
@@ -66,7 +66,7 @@ class App(tk.Tk):
 
         # The title label
         title_font = tkFont.Font(family="Helvetica", size=30, weight="bold")
-        title_label = ttk.Label(self, text="PyFetcher", font=title_font,
+        title_label = ttk.Label(self, text="PyTubeFetcher", font=title_font,
                                 foreground="red", background="#1e1e1e")
         title_label.pack(pady=25)
 
