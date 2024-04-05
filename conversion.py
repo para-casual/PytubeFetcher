@@ -154,11 +154,15 @@ class Conversion:
         playlist = Playlist(playlist_url)
         print(f"\nStarted Converting Playlist: {playlist.title} @ "
               f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}!\n")
+        # Iterate through each video URL in playlist,
+        # converting the video to mp3
         for video_url in playlist.video_urls:
             self.convert_audio(video_url)
             current_video += 1
+            # Provide progress update during conversion
             print(f"\n{current_video} Processed Out Of {len(playlist)} Videos!"
                   f"\n")
+        # Indicate playlist conversion is complete
         print(f"\nFinished Converting Playlist: {playlist.title} @ "
               f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}!\n")
 
@@ -171,11 +175,15 @@ class Conversion:
         playlist = Playlist(playlist_url)
         print(f"\nStarted Converting Playlist: {playlist.title} @ "
               f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}!\n")
+        # Iterate through each video URL in playlist,
+        # converting the video to mp4
         for video_url in playlist.video_urls:
             self.convert_video(video_url)
             current_video += 1
+            # Provide progress update during conversion
             print(f"\n{current_video} Processed Out Of {len(playlist)} Videos!"
                   f"\n")
+        # Indicate playlist conversion is complete
         print(f"\nFinished Converting Playlist: {playlist.title} @ "
               f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}!\n")
 
@@ -185,8 +193,12 @@ class Conversion:
 
         :return: str
         """
+        # Make request to get url
         response = requests.get(url)
+        # Transform HTML text into structured format
         soup = BeautifulSoup(response.text, 'html.parser')
+        # locate and set title,
+        # removing the last 10 characters
         title = soup.find('title').string
         return title[:-10]
 
@@ -197,7 +209,10 @@ class Conversion:
 
         :return:
         """
+        # Get total file size
         total_size = stream.filesize
+        # Calculate bytes downloaded
         bytes_downloaded = total_size - bytes_remaining
+        # Calculate percentage downloaded and display
         percentage_downloaded = bytes_downloaded / total_size * 100
         print(f"{percentage_downloaded:.0f}% Downloaded!")
