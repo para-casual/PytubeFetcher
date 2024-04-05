@@ -166,6 +166,9 @@ class App(tk.Tk):
         self.menu_box.add_cascade(label="Actions", menu=actions_menu)
         actions_menu.add_command(label='Save File Location',
                                  command=lambda: self.open_file_selector())
+        actions_menu.add_command(label='Clear Conversion History',
+                                 command=lambda: self.clear_csv_file())
+
         actions_menu.add_command(label='Quit', command=lambda: self.quit_app())
 
         # Status message label setup
@@ -343,6 +346,20 @@ class App(tk.Tk):
         if messagebox.askyesno("Quit PyTubeFetcher",
                                "Do you want to quit?"):
             self.quit()
+
+    def clear_csv_file(self):
+        """
+        Clears the contents of CSV file to default
+        empty state.
+        :return:
+        """
+        # Ask user if they are sure they want to clear
+        # the CSV file. After it will call a function
+        # for the default empty state with columns.
+        if messagebox.askyesno("Clear CSV File",
+                               "Do you want to erase the conversion history (permanent)?"):
+            open(conversion_records, 'w').close()
+            self.create_conversion_history_csv_file()
 
 
 class Conversion:
