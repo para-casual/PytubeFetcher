@@ -26,4 +26,10 @@ pip install -r requirements.txt
 #### It's that easy!
 
 Note: You can convert as many times as you want without changing any conversion settings in the steps, which makes the process quicker. Change the URL and press convert to move on to the next video conversion!
+---
+## Other Settings:
+In Action Menu
+1. Save File Location: Sets the file path for saving your downloads.
+2. Clear Conversion History: Clears the conversion data in the CSV file.
+3. Quit: Closes the app.
 
