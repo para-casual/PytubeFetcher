@@ -223,25 +223,27 @@ class App(tk.Tk):
                 user to click any UI element without window freezing.
                 :return:
                 """
-
-                convert = Conversion()
-                # If mp4 mode is selected, convert to mp4 and display status
-                # update
-                if mp4_mode:
-                    self.status_message.set(f"Converting to MP4!")
-                    convert.convert_video(yt_url)
-                    self.status_message.set("Done!")
-                # If mp3 mode is selected, convert to mp3 and display status
-                # update
-                elif mp3_mode:
-                    self.status_message.set(f"Converting to MP3!")
-                    convert.convert_audio(yt_url)
-                    self.status_message.set("Done!")
-                # If no mode has been selected, display message telling user
-                # to select a conversion type
-                else:
-                    self.status_message.set("Please Select A Conversion Type "
-                                            "(MP3/MP4!")
+                try:
+                    convert = Conversion()
+                    # If mp4 mode is selected, convert to mp4 and display status
+                    # update
+                    if mp4_mode:
+                        self.status_message.set(f"Converting to MP4!")
+                        convert.convert_video(yt_url)
+                        self.status_message.set("Done!")
+                    # If mp3 mode is selected, convert to mp3 and display status
+                    # update
+                    elif mp3_mode:
+                        self.status_message.set(f"Converting to MP3!")
+                        convert.convert_audio(yt_url)
+                        self.status_message.set("Done!")
+                    # If no mode has been selected, display message telling user
+                    # to select a conversion type
+                    else:
+                        self.status_message.set("Please Select A Conversion "
+                                                "Type (MP3/MP4!")
+                except RuntimeError:
+                    print(f"Error: Thread Problem. Ignoring For Now!")
 
             # Create the thread for conversion.
             yt_conversion_thread = threading.Thread(target=conversion_thread)
@@ -251,7 +253,8 @@ class App(tk.Tk):
             self.status_message.set("Please Select The YT Conversion Quality!")
 
         except Exception as e:
-            messagebox.showerror("Error", f"An unexpected error occurred: {e}")
+            messagebox.showerror("Error", f"An unexpected error "
+                                          f"occurred: {e}")
 
     def is_valid_url(self, url):
         """
@@ -297,6 +300,7 @@ class App(tk.Tk):
         :return:
         """
         print("MP3 MODE SELECTED!")
+        self.status_message.set("MP3 mode selected!")
         global mp3_mode
         global mp4_mode
         mp3_mode = True
@@ -308,12 +312,19 @@ class App(tk.Tk):
         :return:
         """
         print("MP4 MODE SELECTED!")
+        self.status_message.set("MP4 mode selected!")
         global mp3_mode
         global mp4_mode
         mp3_mode = False
         mp4_mode = True
 
     def view_graph_button_command(self):
+        """
+        Opens the graph window where
+        three graph windows are displayed
+        in total after closing one by one.
+        :return:
+        """
         print("View Graph Button Clicked!")
         Graph()
 
@@ -357,9 +368,13 @@ class App(tk.Tk):
         # the CSV file. After it will call a function
         # for the default empty state with columns.
         if messagebox.askyesno("Clear CSV File",
-                               "Do you want to erase the conversion history (permanent)?"):
+                               "Do you want to erase the conversion "
+                               "history (permanent)?"):
             open(conversion_records, 'w').close()
             self.create_conversion_history_csv_file()
+            print("Conversion history was cleared Successfully!")
+            self.status_message.set(
+                "Conversion history was cleared successfully!")
 
 
 class Conversion:
