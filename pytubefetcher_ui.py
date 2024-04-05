@@ -148,10 +148,15 @@ class App(tk.Tk):
         convert_button.pack(pady=20, padx=20, fill="x")
 
         # The button for viewing a graph from conversion history
-        self.view_graph_button = ttk.Button(self, text="View Graph",
-                                            command=lambda:
-                                            self.view_graph_button_command())
-        self.view_graph_button.pack(pady=10, padx=10, side="bottom", anchor="e")
+        view_graph_button_font = tkFont.Font(family="Helvetica", size=20,
+                                             weight="bold")
+        self.style.configure("GraphButton.TButton", foreground='purple',
+                             font=view_graph_button_font, padding=(20, 10))
+        view_graph_button = ttk.Button(self, text="View Graphs (3)",
+                                       style='GraphButton.TButton',
+                                       command=lambda:
+                                       self.view_graph_button_command())
+        view_graph_button.pack(pady=20, padx=20, fill="x", side="bottom")
 
         # create action menus for conversion app
         # Create menu box
@@ -335,7 +340,8 @@ class App(tk.Tk):
         """
         # Ask user if they are sure they want to quit
         # and quit if yes is selected
-        if messagebox.askyesno("Quit PyTubeFetcher", "Do you want to quit?"):
+        if messagebox.askyesno("Quit PyTubeFetcher",
+                               "Do you want to quit?"):
             self.quit()
 
 
@@ -400,7 +406,8 @@ class Conversion:
                 print(f"You Did Not Select A Stream Quality!")
 
             # Save the current conversion in the conversion_history.csv file
-            with open(conversion_records, 'a', newline='') as file:
+            with open(conversion_records, 'a', newline='',
+                      encoding='utf-8') as file:
                 writer = csv.writer(file)
                 writer.writerow(['MP4', video_title, file_size, date])
 
@@ -460,7 +467,8 @@ class Conversion:
             audio.close()
 
             # Save the current conversion in the conversion_history.csv file
-            with open(conversion_records, 'a', newline='') as file:
+            with open(conversion_records, 'a', newline='',
+                      encoding='utf-8') as file:
                 writer = csv.writer(file)
                 writer.writerow(['MP3', video_title, file_size, date])
 

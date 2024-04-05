@@ -92,7 +92,7 @@ class Graph:
                  linestyle='-')
 
         # Setting up the labels of the x and y-axis, as well as the title
-        plt.xlabel('Month')
+        plt.xlabel('Datetime (yyyy-mm)')
         # angle the x-axis title label to 90 degrees
         plt.xticks(rotation=90)
         plt.ylabel('Frequency of Conversions')
