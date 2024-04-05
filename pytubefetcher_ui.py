@@ -252,13 +252,17 @@ class App(tk.Tk):
         :return:
         """
         try:
+            # Make request to URL
             r = requests.get(url)
+            # Check if url contains 'youtube.com' or 'youtu.be'
             site = 'youtube.com'
             shortcut = 'youtu.be'
+            # Check if response indicates video is available
             if "Video unavailable" not in r.text and (site in url or shortcut):
                 return True
             else:
                 return False
+        # Print any exception that occurs during request
         except Exception as e:
             print(e)
 
@@ -267,10 +271,14 @@ class App(tk.Tk):
         This function reads the csv file and creates the headers if empty
         :return:
         """
+        # Check if 'conversion_records' file is empty
         if os.path.getsize(conversion_records) == 0:
+            # Open file for writing and ensure compatibility
             with open(conversion_records, 'w', newline='', encoding='utf8') \
                     as file:
+                # Create CSV writer object with open file
                 writer = csv.writer(file)
+                # Write row containing column headers
                 writer.writerow(
                     ['Conversion Type', 'Video Name', 'File Size (MB)',
                      'Datetime'])
@@ -325,6 +333,8 @@ class App(tk.Tk):
         Quits the app.
         :return:
         """
+        # Ask user if they are sure they want to quit
+        # and quit if yes is selected
         if messagebox.askyesno("Quit PyTubeFetcher", "Do you want to quit?"):
             self.quit()
 
@@ -465,11 +475,15 @@ class Conversion:
         playlist = Playlist(playlist_url)
         print(f"\nStarted Converting Playlist: {playlist.title} @ "
               f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}!\n")
+        # Iterate through each video URL in playlist,
+        # converting the video to mp3
         for video_url in playlist.video_urls:
             self.convert_audio(video_url)
             current_video += 1
+            # Provide progress update during conversion
             print(f"\n{current_video} Processed Out Of {len(playlist)} Videos!"
                   f"\n")
+        # Indicate playlist conversion is complete
         print(f"\nFinished Converting Playlist: {playlist.title} @ "
               f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}!\n")
 
@@ -482,6 +496,8 @@ class Conversion:
         playlist = Playlist(playlist_url)
         print(f"\nStarted Converting Playlist: {playlist.title} @ "
               f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}!\n")
+        # Iterate through each video URL in playlist,
+        # converting the video to mp4
         for video_url in playlist.video_urls:
             self.convert_video(video_url)
             current_video += 1
@@ -496,8 +512,12 @@ class Conversion:
 
         :return: str
         """
+        # Make request to get url
         response = requests.get(url)
+        # Transform HTML text into structured format
         soup = BeautifulSoup(response.text, 'html.parser')
+        # locate and set title,
+        # removing the last 10 characters
         title = soup.find('title').string
         return title[:-10]
 
@@ -508,8 +528,11 @@ class Conversion:
 
         :return:
         """
+        # Get total file size
         total_size = stream.filesize
+        # Calculate bytes downloaded
         bytes_downloaded = total_size - bytes_remaining
+        # Calculate percentage downloaded and display
         percentage_downloaded = bytes_downloaded / total_size * 100
         print(f"{percentage_downloaded:.0f}% Downloaded!")
 
