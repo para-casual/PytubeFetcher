@@ -23,9 +23,9 @@ pip install -r requirements.txt
 3. Select the Quality
 4. Set the file save location
 5. Press the convert button.
-#### It's that easy!
+### It's that easy!
 
-Note: You can convert as many times as you want without changing any conversion settings in the steps, which makes the process quicker. Change the URL and press convert to move on to the next video conversion!
+##### Note: You can convert as many times as you want without changing any conversion settings in the steps, which makes the process quicker. Change the URL and press convert to move on to the next video conversion!
 ---
 ## Other Settings:
 In Action Menu
