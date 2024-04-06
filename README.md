@@ -17,7 +17,8 @@
 
 ### Improved Efficiency and Data Collection 
 - Can convert MP4 and MP3 simultaneously during conversion through the use of threading.
-- Store conversion history and visualize the data as matplotlib graphs to further improve the application by targetting popular features **Collected data will remain anonymous**
+- Store conversion history and visualize the data as matplotlib graphs to further improve the application by targetting popular features.
+- **Collected data will remain anonymous**
 ---
 ## Installation and Module Requirements:
 
