@@ -3,7 +3,7 @@
 ---
 #### This is the official repo for PyTubeFetcher. PyTubeFetcher lets you easily download your favourite YouTube videos in high-quality!
 
-> **Note**
+> **Warning**
 >
 > It is recommended to have permission from the content owner or use non-copyrighted YouTube videos for this!
 
