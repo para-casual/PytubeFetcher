@@ -53,7 +53,10 @@ In Action Menu
 
 ---
 
-## Screenshot:
-
-![image](https://github.com/para-casual/PytubeFetcher/assets/166069340/dc210da0-a3ac-4682-ad00-172958e4f08e)
+## Screenshots:
+![image](https://github.com/para-casual/PytubeFetcher/assets/75636044/c04348d5-0cd2-48d9-b822-8482839cf786)
+![image](https://github.com/para-casual/PytubeFetcher/assets/75636044/1091d8d6-dd23-4212-b776-6d955485c0a3)
+![image](https://github.com/para-casual/PytubeFetcher/assets/75636044/724ddaf5-f140-43fb-bb6e-6fa2cb014777)
+![image](https://github.com/para-casual/PytubeFetcher/assets/75636044/220ba4e0-1160-433f-9135-d1cf67a9a685)
+---
 
