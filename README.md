@@ -50,3 +50,9 @@ In Action Menu
 2. Clear Conversion History: Clears the conversion data in the CSV file.
 3. Quit: Closes the app.
 
+---
+
+## Screenshot:
+
+![image](https://github.com/para-casual/PytubeFetcher/assets/166069340/dc210da0-a3ac-4682-ad00-172958e4f08e)
+
